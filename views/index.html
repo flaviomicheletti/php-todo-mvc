@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block wraper %}
+    <section class="todoapp">
+        <header class="header">
+            <h1>todos</h1>
+            <input class="new-todo" placeholder="What needs to be done?" autofocus id="txt-adicionar">
+        </header>
+
+        <section class="main">
+
+            {% if not state['all-selected'] %}
+                <input id="toggle-all" type="checkbox" value="off" class="toggle-all toggle-all-checked" checked=""/>
+            {% else  %}
+                <input id="toggle-all" type="checkbox" value="on"  class="toggle-all" />
+            {% endif %}
+
+            <label for="toggle-all">Mark all as complete</label>
+                <ul class="todo-list">
+                    {% for todo in todos %}
+
+                        {% if todo.id != edit_id %}
+                            <li class="{{ todo.completed ? 'completed' : '' }}" >
+                                <div class="view">
+                                    <input {{ todo.completed ? 'checked' : '' }}
+                                           class="toggle" type="checkbox" name="todos[]" value="{{ todo.id }}"
+                                           />
+                                    <label><a href="./{{ todo.id }}">{{ todo.descr }}</a></label>
+                                    <a href="{{ base_url() }}/todo/delete/{{ todo.id }}" class="destroy"></a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="editing">
+                                <input type="text" class="edit" value="{{ todo.descr }}" data-id="{{ todo.id }}" id="txt-update" />
+                            </li>
+                        {% endif %}
+
+                    {% endfor %}
+                </ul>
+        </section>
+
+        {% if sum_all %}
+            <footer class="footer" style="display: block;">
+                <span class="todo-count"><strong>{{ sum_actives }}</strong> items left</span>
+                <ul class="filters">
+                    <li> <a class="{{ state['view'] == "all" ? 'selected' : '' }}" href="./all">All</a> </li>
+                    <li> <a class="{{ state['view'] == "active" ? 'selected' : '' }}" href="./active">Active</a> </li>
+                    <li> <a class="{{ state['view'] == "completed" ? 'selected' : '' }}" href="./completed">Completed</a> </li>
+                </ul>
+                {% if sum_completed %}
+                    <a href="{{ base_url() }}/todo/clear-completed/" class="clear-completed">Clear completed</a>
+                {% endif %}
+            </footer>
+        {% endif %}
+
+    </section>
+{% endblock %}
+
+{% block some_js %}
+<script type='text/javascript'>
+
+    // Evento onblur da textbox que faz a inserção do 'todo'
+    var obj = document.getElementById('txt-adicionar');
+    obj.onchange = function () {
+        window.location = "{{ base_url() }}/todo/insert/" + this.value;
+    };
+
+    // Evento onclick para selecionar todos ou não
+    var obj = document.getElementById('toggle-all');
+    obj.onclick = function (event) {
+        window.location = "{{ base_url() }}/todo/toggle-all";
+    };
+
+    // Evento de cada checkbox
+    var checks = document.getElementsByName('todos[]');
+    checks.forEach(function (obj) {
+        obj.onclick = function (event) {
+            window.location = "{{ base_url() }}/todo/toggle/" + event.target.value;
+        };
+    });
+
+    // Evento da textbox quando em modo de edição
+    var obj = document.getElementById('txt-update');
+    if (obj) {
+        obj.onchange = function (event) {
+            var id    = event.target.dataset.id;
+            var value = event.target.value;
+            window.location = '{{ base_url() }}/todo/update/id/' + id + '/descr/' + value;
+        };
+    }
+
+</script>
+{% endblock %}

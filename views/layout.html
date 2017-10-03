@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>PHP • TodoMVC</title>
+
+        <link href="{{ base_url() }}/assets/css/base.css" rel="stylesheet">
+        <link href="{{ base_url() }}/assets/css/index.css" rel="stylesheet">
+    </head>
+    <body class="learn-bar">
+        {% block nav %}
+            {% include 'nav.html' %}
+        {% endblock %}
+
+        {% block wraper %}{% endblock %}
+
+        {% block footer %}
+            {% include 'footer.html' %}
+        {% endblock %}
+
+        {% block some_js %}{% endblock %}
+    </body>
+</html>
